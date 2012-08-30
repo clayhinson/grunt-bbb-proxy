@@ -1,0 +1,40 @@
+{
+  "name": "bbb",
+  "description": "Backbone Boilerplate Build Tool",
+  "version": "0.1.9",
+  "homepage": "https://github.com/adamsea/grunt-bbb-proxy",
+  "author": {
+    "name": "Tim Branyen (@tbranyen)",
+    "email": "tim@tabdeveloper.com",
+    "url": "http://tbranyen.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/adamsea/grunt-bbb-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/backbone-boilerplate/grunt-bbb/issues"
+  },
+  "dependencies": {
+    "grunt": "0.3.11",
+    "grunt-contrib": "0.0.8",
+    "grunt-jasmine-task": "0.2.0",
+
+    "requirejs": "2.0.2",
+    "express": "2.5.11",
+
+    "stylus": "0.28.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.11"
+  },
+  "keywords": ["gruntplugin"],
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "main": "grunt.js",
+  "bin": "bin/bbb",
+  "scripts": {
+    "test": "grunt test"
+  }
+}
