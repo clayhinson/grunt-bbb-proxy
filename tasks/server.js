@@ -105,10 +105,10 @@ module.exports = function(grunt) {
           body += chunk;
         });
         http_res.on('end', function() {
-          res.json(body);
+          res.send(body, { 'Content-Type': 'application/json' }, 200);
         });
         http_res.on('close', function(err) {
-          res.send(500, err);
+          res.send(err, 500);
         });
       });
     });
@@ -134,7 +134,7 @@ module.exports = function(grunt) {
 
     // Serve favicon.ico.
     site.use(express.favicon(options.favicon));
-    
+
     // Ensure all routes go home, client side app..
     site.get("*", function(req, res) {
       fs.createReadStream(options.index).pipe(res);
