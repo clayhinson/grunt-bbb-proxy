@@ -105,7 +105,8 @@ module.exports = function(grunt) {
           body += chunk;
         });
         http_res.on('end', function() {
-          res.send(body, { 'Content-Type': 'application/json' }, 200);
+          var vamResponse = JSON.parse(body);
+          res.json(vamResponse.results, 200);
         });
         http_res.on('close', function(err) {
           res.send(err, 500);
