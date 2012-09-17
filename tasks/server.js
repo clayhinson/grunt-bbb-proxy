@@ -142,7 +142,6 @@ module.exports = function(grunt) {
       // Cache for one day
       var expires = Date.now() * (60 * 60 * 24);
       res.header("Cache-Control", "maxage=" + expires);
-      res.header("Content-Type", "application/json");
       next();
     });
 
