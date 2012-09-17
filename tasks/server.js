@@ -42,7 +42,8 @@ module.exports = function(grunt) {
     options.folders = _.defaults(options.folders, {
       app: "./app",
       assets: "./assets",
-      dist: "./dist"
+      dist: "./dist",
+      config: "./config"
     });
 
     options.files = options.files || {};
@@ -68,6 +69,11 @@ module.exports = function(grunt) {
     var stylus = require("stylus");
     var express = require("express");
 
+    // HOST mapping for clients
+    var hostMapping = {
+      "newsplace.toshiba.com": "toshiba"
+    };
+
     // If the server is already available use it.
     var site = options.server ? options.server() : express.createServer();
 
@@ -88,6 +94,23 @@ module.exports = function(grunt) {
           res.send(css);
         });
       });
+    });
+
+    // Process config url
+    site.get("/config.json", function(req, res, next) {
+      var client,
+          env = process.env,
+          host = env.HOST || env.HOSTNAME;
+
+      // Use a default if we're on opal
+      if (!host || /opal/.test(host)) {
+        return res.redirect("/config/toshiba/config.json", 302);
+      }
+      // Use a default if the hostMapping is empty
+      else {
+        client = hostMapping[host] || "toshiba";
+      }
+      return res.redirect("/config/" + client + "/config.json", 302);
     });
 
     // Process proxy urls
@@ -112,6 +135,15 @@ module.exports = function(grunt) {
           res.send(err, 500);
         });
       });
+    });
+
+    // Handle config responses with caching, etc.
+    site.get("/config/:client/*", function(req, res, next) {
+      // Cache for one day
+      var expires = Date.now() * (60 * 60 * 24);
+      res.header("Cache-Control", "maxage=" + expires);
+      res.header("Content-Type", "application/json");
+      next();
     });
 
     // Map static folders.
