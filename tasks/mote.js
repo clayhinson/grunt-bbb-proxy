@@ -88,7 +88,7 @@ module.exports = function(grunt) {
 		.replace(/\r/g, '\\r')
 		.replace(/\n/g, '\\n')
 		.replace(/\t/g, '\\t'),
-      	output = 'mote.compile("' + templateString + '");';
+		output = 'mote.compile("' + templateString + '");';
       return namespace + "['" + filepath + "'] = " + output;
     } catch (e) {
       grunt.log.error(e);
