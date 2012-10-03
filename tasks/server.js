@@ -144,6 +144,7 @@ module.exports = function(grunt) {
           body += chunk;
         });
         http_res.on('end', function() {
+          body = body.replace(/^\xEF\xBB\xBF/, '');
           var vamResponse = JSON.parse(body);
           res.json(vamResponse.results, 200);
         });
