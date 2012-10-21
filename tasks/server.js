@@ -130,14 +130,15 @@ module.exports = function(grunt) {
     });
 
     // Process proxy urls
-    site.get("/proxy", function(req, res, next) {
-      var url = require("url");
+    site.get(/^\/\w+\/\d+\/vam\/(.*)$/, function(req, res, next) {
       var http = require("http");
-      var proxy_url = decodeURIComponent(req.query.proxyto || "");
-      var proxy_opts = url.parse(proxy_url);
+      // This will have to exist via hostfiles...*fistshake*
+      var client = req.headers.host.split(".")[0];
+      // Doesn't look like syn-pub provides us an api version yet
+      var url = client + ".am4.syn-api.com/" + req.params[0];
 
       // Make the request
-      http.get(proxy_opts, function(http_res) {
+      http.get(require("url").parse(url), function(http_res) {
         var body = "";
         http_res.setEncoding('utf8');
         http_res.on('data', function(chunk) {
