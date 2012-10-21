@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 
     // HOST mapping for clients
     var hostMapping = {
-      "newsplace.toshiba.com": "toshiba"
+      "toshiba.mobile.syn-pub.com": "toshiba"
     };
 
     // If the server is already available use it.
@@ -135,7 +135,7 @@ module.exports = function(grunt) {
       // This will have to exist via hostfiles...*fistshake*
       var client = req.headers.host.split(".")[0];
       // Doesn't look like syn-pub provides us an api version yet
-      var url = client + ".am4.syn-api.com/" + req.params[0];
+      var url = 'http://' + client + ".am4.syn-api.com/" + req.params[0];
 
       // Make the request
       http.get(require("url").parse(url), function(http_res) {
