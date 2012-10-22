@@ -69,19 +69,10 @@ module.exports = function(grunt) {
     var stylus = require("stylus");
     var express = require("express");
 
-    // CORS Middleware
-    var allowCrossDomain = function(req, res, next) {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
-      // intercept OPTIONS method
-      if ('OPTIONS' == req.method) {
-        res.send(200);
-      }
-      else {
-        next();
-      }
+    // Strip out /{appname}/{appversion}
+    var stripRouteBase = function(req, res, next) {
+      req.url = req.url.replace(/^\/\w+\/\d+\/?(.*)$/, "/$1");
+      next();
     };
 
     // HOST mapping for clients
@@ -91,7 +82,7 @@ module.exports = function(grunt) {
 
     // If the server is already available use it.
     var site = options.server ? options.server() : express.createServer();
-    site.use(allowCrossDomain);
+    site.use(stripRouteBase);
 
     // Allow users to override the root.
     var root = _.isString(options.root) ? options.root : "/";
@@ -130,7 +121,7 @@ module.exports = function(grunt) {
     });
 
     // Process proxy urls
-    site.get(/^\/\w+\/\d+\/vam\/(.*)$/, function(req, res, next) {
+    site.get("/vam/*", function(req, res, next) {
       var http = require("http");
       // This will have to exist via hostfiles...*fistshake*
       var client = req.headers.host.split(".")[0];
