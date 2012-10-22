@@ -75,6 +75,21 @@ module.exports = function(grunt) {
       next();
     };
 
+    // CORS Middleware
+    var allowCrossDomain = function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+      // intercept OPTIONS method
+      if ('OPTIONS' == req.method) {
+        res.send(200);
+      }
+      else {
+        next();
+      }
+    };
+
     // HOST mapping for clients
     var hostMapping = {
       "toshiba.mobile.syn-pub.com": "toshiba"
@@ -82,6 +97,7 @@ module.exports = function(grunt) {
 
     // If the server is already available use it.
     var site = options.server ? options.server() : express.createServer();
+    site.use(allowCrossDomain);
     site.use(stripRouteBase);
 
     // Allow users to override the root.
