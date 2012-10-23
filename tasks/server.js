@@ -154,7 +154,7 @@ module.exports = function(grunt) {
         http_res.on('end', function() {
           body = body.replace(/^\xEF\xBB\xBF/, '');
           var vamResponse = JSON.parse(body);
-          res.json(vamResponse.results, 200);
+          res.json(vamResponse, 200);
         });
         http_res.on('close', function(err) {
           res.send(err, 500);
