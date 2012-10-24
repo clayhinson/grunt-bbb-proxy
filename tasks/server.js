@@ -192,8 +192,8 @@ module.exports = function(grunt) {
     // Serve favicon.ico.
     site.use(express.favicon(options.favicon));
 
-    // Ensure all routes go home, client side app..
-    site.get("*", function(req, res) {
+    // Home page!
+    site.get(/^\/(?:index.html)?/, function(req, res) {
       fs.createReadStream(options.index).pipe(res);
     });
 
