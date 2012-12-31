@@ -10,6 +10,22 @@
 
 module.exports = function(grunt) {
 
+  // Determine the client based on the hostname
+  function determineClient() {
+    var client,
+        env = process.env,
+        host = env.HOST || env.HOSTNAME;
+
+    // Use a default if we're on opal
+    if (!host || /opal/.test(host)) {
+      return "opal";
+    }
+    // Use a default if the hostMapping is empty
+    else {
+      return hostMapping[host] || "toshiba";
+    }
+  }
+
   // TODO: ditch this when grunt v0.4 is released
   grunt.util = grunt.util || grunt.utils;
 
@@ -36,9 +52,19 @@ module.exports = function(grunt) {
       host: process.env.HOST || process.env.HOSTNAME || "127.0.0.1"
     });
 
-    options.folders = options.folders || {};
+    // Make sure we have client favicon
+    options.favicon = (function() {
+      var client = determineClient();
+      if (client === 'opal') {
+        return "./favicon.ico";
+      }
+      else {
+        return "./assets/img/" + client + "/favicon.ico";
+      }
+    }());
 
     // Ensure folders have correct defaults
+    options.folders = options.folders || {};
     options.folders = _.defaults(options.folders, {
       app: "./app",
       assets: "./assets",
@@ -121,19 +147,16 @@ module.exports = function(grunt) {
 
     // Process config url
     site.get("/config.json", function(req, res, next) {
-      var client,
-          env = process.env,
-          host = env.HOST || env.HOSTNAME;
+      var client = determineClient();
 
       // Use a default if we're on opal
-      if (!host || /opal/.test(host)) {
+      if (client === "opal") {
         return res.redirect("/config/toshiba/config.json", 302);
       }
       // Use a default if the hostMapping is empty
       else {
-        client = hostMapping[host] || "toshiba";
+        return res.redirect("/config/" + client + "/config.json", 302);
       }
-      return res.redirect("/config/" + client + "/config.json", 302);
     });
 
     // Process proxy urls
