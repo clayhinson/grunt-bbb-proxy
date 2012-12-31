@@ -52,17 +52,6 @@ module.exports = function(grunt) {
       host: process.env.HOST || process.env.HOSTNAME || "127.0.0.1"
     });
 
-    // Make sure we have client favicon
-    options.favicon = (function() {
-      var client = determineClient();
-      if (client === 'opal') {
-        return "./favicon.ico";
-      }
-      else {
-        return "./assets/img/" + client + "/favicon.ico";
-      }
-    }());
-
     // Ensure folders have correct defaults
     options.folders = options.folders || {};
     options.folders = _.defaults(options.folders, {
@@ -143,6 +132,25 @@ module.exports = function(grunt) {
           res.send(css);
         });
       });
+    });
+
+    // Determine favicon path
+    site.get("/favicon.ico", function(req, res, next) {
+      var host = req.headers && req.headers.host,
+          client = (function() {
+            if (!host || /opal/.test(host)) {
+              return "opal";
+            }
+            return hostMapping[host] || "toshiba";
+          }());
+
+      // Default to toshiba
+      if (client === 'opal') {
+        return res.redirect("./assets/img/toshiba/favicon.ico", 302);
+      }
+      else {
+        return res.redirect("./assets/img/" + client + "/favicon.ico", 302);
+      }
     });
 
     // Process config url
