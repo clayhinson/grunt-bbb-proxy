@@ -10,20 +10,18 @@
 
 module.exports = function(grunt) {
 
-  // TODO: ditch this when grunt v0.4 is released
-  grunt.util = grunt.util || grunt.utils;
-
   // Node.js modules
   var fs = require("fs");
   var path = require("path");
   // Include requirejs
   var requirejs = require("requirejs");
-  var _ = grunt.util._;
+  var _ = grunt.utils._;
   // Shorthand Grunt functions
   var log = grunt.log;
 
   grunt.registerTask("requirejs", "Build a RequireJS project.", function(prop) {
     var options = grunt.config("requirejs") || {};
+    var done = this.async();
 
     // Merge passed options into defaults
     options = _.extend({}, {
@@ -41,6 +39,8 @@ module.exports = function(grunt) {
     grunt.helper("r.js", options, function(response) {
       // Print out response
       log.writeln(response);
+
+      done();
     });
   });
 
@@ -88,7 +88,6 @@ module.exports = function(grunt) {
             contents);
         });
         
-        //console.log({ deps: deps });
         console.log(grunt.helper("tree", deps));
       });
     });
