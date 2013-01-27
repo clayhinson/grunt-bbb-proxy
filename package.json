@@ -16,7 +16,7 @@
     "url": "https://github.com/backbone-boilerplate/grunt-bbb/issues"
   },
   "dependencies": {
-    "grunt": "0.3.11",
+    "grunt": "0.3.17",
     "grunt-contrib": "0.0.8",
     "grunt-jasmine-task": "0.2.0",
     "mote": "0.2.0",
@@ -27,7 +27,7 @@
     "stylus": "0.28.2"
   },
   "devDependencies": {
-    "grunt": "~0.3.11"
+    "grunt": "~0.3.17"
   },
   "keywords": ["gruntplugin"],
   "engines": {
