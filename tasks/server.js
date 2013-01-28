@@ -48,7 +48,7 @@ module.exports = function(grunt) {
       favicon: "./favicon.ico",
       index: "./index.html",
 
-      port: process.env.PORT || 80,
+      port: process.env.PORT || 8000,
       host: process.env.HOST || process.env.HOSTNAME || "127.0.0.1"
     });
 
