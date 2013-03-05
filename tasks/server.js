@@ -1,3 +1,4 @@
+/*global process */
 /*
  * Grunt Task File
  * ---------------
@@ -133,21 +134,11 @@ module.exports = function(grunt) {
 
     // Determine favicon path
     site.get("/favicon.ico", function(req, res, next) {
-      var host = req.headers && req.headers.host,
-          client = (function() {
-            if (!host || /opal/.test(host)) {
-              return "opal";
-            }
-            return hostMapping[host] || "toshiba";
-          }());
+      var client = determineClient(req.headers.host, hostMapping);
 
-      // Default to toshiba
-      if (client === 'opal') {
-        return res.redirect("./assets/img/toshiba/favicon.ico", 302);
-      }
-      else {
-        return res.redirect("./assets/img/" + client + "/favicon.ico", 302);
-      }
+      // Use a default if we're on opal
+      client = (client === "opal") && "toshiba" || client;
+      return res.redirect("./assets/img/" + client + "/favicon.ico", 302);
     });
 
     // Process config url
@@ -155,21 +146,17 @@ module.exports = function(grunt) {
       var client = determineClient(req.headers.host, hostMapping);
 
       // Use a default if we're on opal
-      if (client === "opal") {
-        return res.redirect("/config/toshiba/config.json", 302);
-      }
-      // Use a default if the hostMapping is empty
-      else {
-        return res.redirect("/config/" + client + "/config.json", 302);
-      }
+      client = (client === "opal") && "toshiba" || client;
+      return res.redirect("/config/" + client + "/config.json", 302);
     });
 
     // Process proxy urls
     site.get("/vam/*", function(req, res, next) {
       var http = require("http");
       // This will have to exist via hostfiles...*fistshake*
-      var client = req.headers.host.split(".")[0];
+      var client = determineClient(req.headers.host, hostMapping);
       // Doesn't look like syn-pub provides us an api version yet
+      client = (client === "opal") && "toshiba" || client;
       var url = 'http://' + client + ".am4.syn-api.com/" + req.params[0];
 
       // Make the request
