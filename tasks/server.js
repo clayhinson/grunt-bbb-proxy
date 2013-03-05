@@ -11,11 +11,7 @@
 module.exports = function(grunt) {
 
   // Determine the client based on the hostname
-  function determineClient() {
-    var client,
-        env = process.env,
-        host = env.HOST || env.HOSTNAME;
-
+  function determineClient(host, hostMapping) {
     // Use a default if we're on opal
     if (!host || /opal/.test(host)) {
       return "opal";
@@ -156,7 +152,7 @@ module.exports = function(grunt) {
 
     // Process config url
     site.get("/config.json", function(req, res, next) {
-      var client = determineClient();
+      var client = determineClient(req.headers.host, hostMapping);
 
       // Use a default if we're on opal
       if (client === "opal") {
