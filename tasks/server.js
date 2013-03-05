@@ -107,7 +107,8 @@ module.exports = function(grunt) {
 
     // HOST mapping for clients
     var hostMapping = {
-      "toshiba.mobile.syn-pub.com": "toshiba"
+      "toshiba.mobile.syn-pub.com": "toshiba",
+      "centurylink.mobile.syn-pub.com": "centurylink"
     };
 
     // If the server is already available use it.
