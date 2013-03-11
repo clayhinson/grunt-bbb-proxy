@@ -167,7 +167,7 @@ module.exports = function(grunt) {
           body += chunk;
         });
         http_res.on('end', function() {
-          body = body.replace(/^\xEF\xBB\xBF/, '');
+          body = body.replace(/^[^\{]+/, '');
           var vamResponse = JSON.parse(body);
           res.json(vamResponse, 200);
         });
