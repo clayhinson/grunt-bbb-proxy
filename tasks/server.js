@@ -12,15 +12,18 @@
 module.exports = function(grunt) {
 
   // Determine the client based on the hostname
+  var client;
   function determineClient(host, hostMapping) {
-    // Use a default if we're on opal
-    if (!host || /opal/.test(host)) {
-      return "opal";
-    }
-    // Use a default if the hostMapping is empty
-    else {
-      return hostMapping[host] || "toshiba";
-    }
+    return client || (function() {
+      // Use a default if we're on opal
+      if (!host || /opal/.test(host)) {
+        return "opal";
+      }
+      // Use a default if the hostMapping is empty
+      else {
+        return hostMapping[host] || "toshiba";
+      }
+    }());
   }
 
   // TODO: ditch this when grunt v0.4 is released
@@ -87,6 +90,12 @@ module.exports = function(grunt) {
       next();
     };
 
+    // Set a client override
+    var setClientOverride = function(req, res, next) {
+      client = client || req.query && req.query.client;
+      next();
+    };
+
     // CORS Middleware
     var allowCrossDomain = function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
@@ -111,6 +120,7 @@ module.exports = function(grunt) {
     // If the server is already available use it.
     var site = options.server ? options.server() : express.createServer();
     site.use(allowCrossDomain);
+    site.use(setClientOverride);
     site.use(stripRouteBase);
 
     // Allow users to override the root.
