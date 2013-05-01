@@ -1,4 +1,4 @@
-/*global process */
+/*global process,require,module */
 /*
  * Grunt Task File
  * ---------------
@@ -161,30 +161,38 @@ module.exports = function(grunt) {
     });
 
     // Process proxy urls
-    site.get("/vam/*", function(req, res, next) {
-      var http = require("http");
-      // This will have to exist via hostfiles...*fistshake*
-      var client = determineClient(req.headers.host, hostMapping);
-      // Doesn't look like syn-pub provides us an api version yet
-      client = (client === "opal") && "toshiba" || client;
-      var url = 'http://' + client + ".am4.syn-api.com/" + req.params[0];
-
+    var makeRequest = function(url, res, next) {
       // Make the request
-      http.get(require("url").parse(url), function(http_res) {
+      require("http").get(require("url").parse(url), function(http_res) {
         var body = "";
         http_res.setEncoding('utf8');
         http_res.on('data', function(chunk) {
           body += chunk;
         });
         http_res.on('end', function() {
+          var vamResponse;
           body = body.replace(/^[^\{]+/, '');
-          var vamResponse = JSON.parse(body);
-          res.json(vamResponse, 200);
+          if (body) {
+            vamResponse = JSON.parse(body);
+          }
+          res.json(vamResponse || {}, 200);
         });
         http_res.on('close', function(err) {
           res.send(err, 500);
         });
       });
+    };
+	// VAM
+    site.get("/vam/*", function(req, res, next) {
+      var client = determineClient(req.headers.host, hostMapping);
+      client = (client === "opal") && "toshiba" || client;
+      makeRequest("http://" + client + ".am4.syn-api.com/" + req.params[0], res, next);
+    });
+    // Recommendations
+    site.get("/recommendations/*", function(req, res, next) {
+      var client = determineClient(req.headers.host, hostMapping);
+      client = (client === "opal") && "toshiba" || client;
+      makeRequest("http://" + client + ".recommendation1.svcs:4080/v1/" + req.params[0], res, next);
     });
 
     // Handle config responses with caching, etc.
