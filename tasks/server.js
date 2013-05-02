@@ -192,7 +192,7 @@ module.exports = function(grunt) {
     site.get("/recommendations/*", function(req, res, next) {
       var client = determineClient(req.headers.host, hostMapping);
       client = (client === "opal") && "toshiba" || client;
-      makeRequest("http://" + client + ".recommendation1.svcs:4080/v1/" + req.params[0], res, next);
+      makeRequest("http://" + client + ".recommendation1.svcs.opal.synacor.com:4080/v1/" + req.params[0], res, next);
     });
 
     // Handle config responses with caching, etc.
