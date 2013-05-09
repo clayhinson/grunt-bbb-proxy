@@ -190,9 +190,17 @@ module.exports = function(grunt) {
     });
     // Recommendations
     site.get("/recommendations/*", function(req, res, next) {
-      var client = determineClient(req.headers.host, hostMapping);
+      var client = determineClient(req.headers.host, hostMapping),
+      queryParams = [],
+      query = '';
       client = (client === "opal") && "toshiba" || client;
-      makeRequest("http://" + client + ".recommendation1.svcs.opal.synacor.com:4080/v1/" + req.params[0], res, next);
+      if(req.query) {
+        _.map(req.query, function(value, key) {
+          queryParams.push(key+'='+value);
+        });
+        query = '?' + queryParams.join('&');
+      }
+      makeRequest("http://" + client + ".recommendation1.svcs:4080/v1/" + req.params[0] + query, res, next);
     });
 
     // Handle config responses with caching, etc.
@@ -235,3 +243,5 @@ module.exports = function(grunt) {
   });
 
 };
+
+
